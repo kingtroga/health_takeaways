@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ content.title }} - Health Takeaways{% endblock %}
+
+{% block extra_head %}
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="{{ content.title }}">
+<meta property="og:description" content="{{ content.excerpt|default:content.body|truncatewords:30 }}">
+<meta property="og:type" content="article">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+{% if content.image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ content.image.url }}">
+{% endif %}
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ content.title }}">
+<meta name="twitter:description" content="{{ content.excerpt|default:content.body|truncatewords:30 }}">
+{% if content.image %}
+<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ content.image.url }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb Navigation -->
+<nav class="bg-gray-50 py-3 border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center space-x-2 text-sm text-gray-500">
+            <a href="{% url 'home' %}" class="hover:text-health-primary transition-colors">Home</a>
+            <i class="fas fa-chevron-right text-xs"></i>
+            <a href="{% url 'content_list' %}" class="hover:text-health-primary transition-colors">Content</a>
+            <i class="fas fa-chevron-right text-xs"></i>
+            <span class="text-gray-900">{{ content.title|truncatewords:5 }}</span>
+        </div>
+    </div>
+</nav>
+
+<!-- Content Header -->
+<header class="py-8 bg-white border-b border-gray-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <!-- Content Type Badge -->
+            <div class="mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                    {% if content.content_type == 'text' %}bg-blue-100 text-blue-800
+                    {% elif content.content_type == 'image' %}bg-purple-100 text-purple-800
+                    {% elif content.content_type == 'video' %}bg-red-100 text-red-800
+                    {% elif content.content_type == 'poll' %}bg-green-100 text-green-800
+                    {% elif content.content_type == 'article' %}bg-indigo-100 text-indigo-800
+                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {% if content.content_type == 'text' %}
+                        <i class="fas fa-file-alt mr-2"></i> Health Tip
+                    {% elif content.content_type == 'image' %}
+                        <i class="fas fa-image mr-2"></i> Image Post
+                    {% elif content.content_type == 'video' %}
+                        <i class="fas fa-video mr-2"></i> Video Content
+                    {% elif content.content_type == 'poll' %}
+                        <i class="fas fa-poll mr-2"></i> Health Poll
+                    {% elif content.content_type == 'article' %}
+                        <i class="fas fa-newspaper mr-2"></i> Article
+                    {% else %}
+                        <i class="fas fa-file mr-2"></i> Content
+                    {% endif %}
+                </span>
+                {% if content.is_featured %}
+                <span class="inline-flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 text-sm font-medium rounded-full ml-2">
+                    <i class="fas fa-star mr-1"></i> Featured
+                </span>
+                {% endif %}
+            </div>
+
+            <!-- Title -->
+            <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                {{ content.title }}
+            </h1>
+
+            <!-- Meta Information -->
+            <div class="flex flex-wrap justify-center items-center text-sm text-gray-500 space-x-6">
+                <div class="flex items-center">
+                    <i class="fas fa-calendar mr-2"></i>
+                    <time datetime="{{ content.created_at|date:'Y-m-d' }}">
+                        {{ content.created_at|date:"F d, Y" }}
+                    </time>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-eye mr-2"></i>
+                    <span>{{ content.view_count }} view{{ content.view_count|pluralize }}</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-clock mr-2"></i>
+                    <span>
+                        {% if content.content_type == 'video' %}3-5 min
+                        {% elif content.content_type == 'article' %}{{ content.body|wordcount|floatformat:0|add:"60"|div:"200" }} min read
+                        {% else %}1 min read
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Content -->
+<main class="py-12 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <article class="bg-white rounded-xl shadow-lg overflow-hidden">
+            
+            <!-- Content Based on Type -->
+            {% if content.content_type == 'video' %}
+            <!-- Video Content -->
+            <div class="aspect-w-16 aspect-h-9 bg-gray-900">
+                {% if content.video_url %}
+                    {% if 'youtube.com' in content.video_url or 'youtu.be' in content.video_url %}
+                    <!-- YouTube Embed -->
+                    <iframe src="https://www.youtube.com/embed/{{ content.video_url|cut:'https://www.youtube.com/watch?v='|cut:'https://youtu.be/' }}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen
+                            class="w-full h-80 lg:h-96"></iframe>
+                    {% elif 'vimeo.com' in content.video_url %}
+                    <!-- Vimeo Embed -->
+                    <iframe src="https://player.vimeo.com/video/{{ content.video_url|cut:'https://vimeo.com/' }}" 
+                            frameborder="0" 
+                            allow="autoplay; fullscreen; picture-in-picture" 
+                            allowfullscreen
+                            class="w-full h-80 lg:h-96"></iframe>
+                    {% else %}
+                    <!-- Generic Video Link -->
+                    <div class="flex items-center justify-center h-80 lg:h-96 bg-gray-800">
+                        <a href="{{ content.video_url }}" target="_blank" class="inline-flex items-center px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="fas fa-play mr-3"></i>
+                            Watch Video
+                        </a>
+                    </div>
+                    {% endif %}
+                {% elif content.thumbnail %}
+                <div class="relative">
+                    <img src="{{ content.thumbnail.url }}" alt="{{ content.title }}" class="w-full h-80 lg:h-96 object-cover">
+                    <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <i class="fas fa-play-circle text-white text-6xl"></i>
+                    </div>
+                </div>
+                {% else %}
+                <div class="flex items-center justify-center h-80 lg:h-96 bg-gray-800">
+                    <i class="fas fa-video text-white text-6xl"></i>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% elif content.content_type == 'image' %}
+            <!-- Image Content -->
+            {% if content.image %}
+            <div class="text-center bg-gray-100">
+                <img src="{{ content.image.url }}" alt="{{ content.title }}" class="max-w-full h-auto mx-auto">
+            </div>
+            {% endif %}
+            
+            {% elif content.content_type == 'poll' and poll %}
+            <!-- Poll Content -->
+            <div class="p-8 bg-gradient-to-br from-green-50 to-emerald-50">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
+                        <i class="fas fa-poll text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ poll.question }}</h3>
+                    <p class="text-gray-600">Share your thoughts on this health topic</p>
+                </div>
+                
+                <form id="poll-form" class="space-y-4 max-w-lg mx-auto">
+                    {% csrf_token %}
+                    <input type="hidden" name="poll_id" value="{{ poll.id }}">
+                    {% for option in poll.options.all %}
+                    <label class="flex items-center p-4 bg-white rounded-lg border border-gray-200 hover:border-green-300 cursor-pointer transition-colors">
+                        <input type="radio" name="poll_option" value="{{ option.id }}" class="text-green-600 focus:ring-green-500">
+                        <span class="ml-3 text-gray-900">{{ option.option_text }}</span>
+                        <div class="ml-auto text-sm text-gray-500">
+                            <span class="votes-count">{{ option.votes }}</span> vote{{ option.votes|pluralize }}
+                        </div>
+                    </label>
+                    {% endfor %}
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-medium">
+                        Submit Vote
+                    </button>
+                </form>
+                
+                <div id="poll-results" class="hidden mt-6">
+                    <h4 class="font-semibold text-gray-900 mb-4 text-center">Poll Results</h4>
+                    <div class="space-y-3">
+                        {% for option in poll.options.all %}
+                        <div class="bg-white rounded-lg p-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-900">{{ option.option_text }}</span>
+                                <span class="text-sm text-gray-600">{{ option.votes }} vote{{ option.votes|pluralize }}</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: {% widthratio option.votes poll.options.all|length %}%"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Content Body -->
+            {% if content.excerpt or content.body %}
+            <div class="p-8">
+                {% if content.excerpt %}
+                <div class="text-lg text-gray-700 mb-6 leading-relaxed font-medium bg-health-accent p-4 rounded-lg border-l-4 border-health-primary">
+                    {{ content.excerpt }}
+                </div>
+                {% endif %}
+                
+                {% if content.body %}
+                <div class="prose prose-lg max-w-none text-gray-800 leading-relaxed">
+                    {{ content.body|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Content Footer -->
+            <div class="px-8 py-6 bg-gray-50 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+                    <!-- Share Buttons -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600 font-medium">Share:</span>
+                        <a href="https://wa.me/?text={{ content.title|urlencode }} - {{ request.build_absolute_uri|urlencode }}" 
+                           class="inline-flex items-center px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm">
+                            <i class="fab fa-whatsapp mr-2"></i> WhatsApp
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?text={{ content.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" 
+                           class="inline-flex items-center px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors text-sm">
+                            <i class="fab fa-twitter mr-2"></i> Twitter
+                        </a>
+                        <button onclick="copyToClipboard('{{ request.build_absolute_uri }}')" 
+                                class="inline-flex items-center px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm">
+                            <i class="fas fa-copy mr-2"></i> Copy Link
+                        </button>
+                    </div>
+                    
+                    <!-- Back to List -->
+                    <a href="{% url 'content_list' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-health-primary text-white rounded-lg hover:bg-health-dark transition-colors text-sm">
+                        <i class="fas fa-arrow-left mr-2"></i> Back to Content
+                    </a>
+                </div>
+            </div>
+        </article>
+        
+        <!-- Related Content -->
+        {% if related_content %}
+        <section class="mt-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">Related Content</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for related in related_content %}
+                <article class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100 overflow-hidden">
+                    <div class="h-32 bg-gradient-to-br 
+                        {% if related.content_type == 'text' %}from-blue-50 to-blue-100
+                        {% elif related.content_type == 'image' %}from-purple-50 to-purple-100
+                        {% elif related.content_type == 'video' %}from-red-50 to-red-100
+                        {% elif related.content_type == 'poll' %}from-green-50 to-green-100
+                        {% elif related.content_type == 'article' %}from-indigo-50 to-indigo-100
+                        {% else %}from-gray-50 to-gray-100{% endif %} flex items-center justify-center">
+                        {% if related.content_type == 'text' %}
+                            <i class="fas fa-file-alt text-blue-500 text-2xl"></i>
+                        {% elif related.content_type == 'image' %}
+                            <i class="fas fa-image text-purple-500 text-2xl"></i>
+                        {% elif related.content_type == 'video' %}
+                            <i class="fas fa-video text-red-500 text-2xl"></i>
+                        {% elif related.content_type == 'poll' %}
+                            <i class="fas fa-poll text-green-500 text-2xl"></i>
+                        {% elif related.content_type == 'article' %}
+                            <i class="fas fa-newspaper text-indigo-500 text-2xl"></i>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ related.title }}</h3>
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ related.excerpt|default:"Health content to improve your wellness." }}</p>
+                        <a href="{{ related.get_absolute_url }}" class="text-health-primary hover:text-health-dark text-sm font-medium">
+                            Read more →
+                        </a>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Copy to clipboard function
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Show success message
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check mr-2"></i> Copied!';
+        setTimeout(() => {
+            button.innerHTML = originalText;
+        }, 2000);
+    });
+}
+
+// Poll submission (if polls are present)
+document.addEventListener('DOMContentLoaded', function() {
+    const pollForm = document.getElementById('poll-form');
+    if (pollForm) {
+        pollForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(pollForm);
+            
+            // Here you would typically send an AJAX request to your Django view
+            // For now, we'll just show the results
+            pollForm.style.display = 'none';
+            document.getElementById('poll-results').classList.remove('hidden');
+            
+            // Show thank you message
+            const thankYou = document.createElement('div');
+            thankYou.className = 'text-center py-4 bg-green-100 text-green-800 rounded-lg mb-4';
+            thankYou.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Thank you for voting!';
+            document.getElementById('poll-results').insertBefore(thankYou, document.getElementById('poll-results').firstChild);
+        });
+    }
+});
+</script>
+{% endblock %}

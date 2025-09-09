@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}All Content - Health Takeaways{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="bg-gradient-to-r from-health-primary to-emerald-600 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+            <h1 class="text-3xl lg:text-4xl font-bold text-white mb-4">
+                {% if request.GET.type %}
+                    {% if request.GET.type == 'text' %}Text Tips
+                    {% elif request.GET.type == 'article' %}Articles
+                    {% elif request.GET.type == 'video' %}Videos
+                    {% elif request.GET.type == 'poll' %}Polls
+                    {% else %}All Content
+                    {% endif %}
+                {% else %}All Content
+                {% endif %}
+            </h1>
+            <p class="text-lg text-emerald-100 max-w-2xl mx-auto">
+                {% if request.GET.type %}
+                    {% if request.GET.type == 'text' %}Browse our collection of quick health tips and wellness advice
+                    {% elif request.GET.type == 'article' %}Explore in-depth articles on health and wellness topics
+                    {% elif request.GET.type == 'video' %}Watch engaging health and wellness videos
+                    {% elif request.GET.type == 'poll' %}Participate in interactive health polls and surveys
+                    {% else %}Discover all our health and wellness content
+                    {% endif %}
+                {% else %}Discover all our health and wellness content
+                {% endif %}
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Filter and Search Section -->
+<section class="py-8 bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-md">
+                <form method="GET" class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                    <input type="text" name="search" value="{{ request.GET.search }}" 
+                           placeholder="Search content..." 
+                           class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-health-primary focus:border-health-primary">
+                    {% if request.GET.type %}
+                        <input type="hidden" name="type" value="{{ request.GET.type }}">
+                    {% endif %}
+                </form>
+            </div>
+            
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-3">
+                <a href="{% url 'content_list' %}" 
+                   class="{% if not request.GET.type %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    All
+                </a>
+                <a href="{% url 'content_list' %}?type=text" 
+                   class="{% if request.GET.type == 'text' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    <i class="fas fa-file-alt mr-1"></i> Text
+                </a>
+                <a href="{% url 'content_list' %}?type=article" 
+                   class="{% if request.GET.type == 'article' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    <i class="fas fa-newspaper mr-1"></i> Articles
+                </a>
+                <a href="{% url 'content_list' %}?type=video" 
+                   class="{% if request.GET.type == 'video' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    <i class="fas fa-video mr-1"></i> Videos
+                </a>
+                <a href="{% url 'content_list' %}?type=poll" 
+                   class="{% if request.GET.type == 'poll' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    <i class="fas fa-poll mr-1"></i> Polls
+                </a>
+            </div>
+        </div>
+        
+        <!-- Results Count -->
+        {% if post_list %}
+        <div class="mt-6 text-sm text-gray-600">
+            Showing {{ post_list|length }} of {{ total_count|default:post_list|length }} results
+            {% if request.GET.search %}
+                for "{{ request.GET.search }}"
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Content Grid -->
+<section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% if post_list %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for post in post_list %}
+            <article class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden group">
+                <!-- Content Preview/Thumbnail -->
+                <div class="relative">
+                    {% if post.content_type == 'image' %}
+                    <div class="aspect-w-16 aspect-h-10 bg-gray-100">
+                        <img src="{{ post.image.url|default:'/static/images/placeholder-image.jpg' }}" 
+                             alt="{{ post.title }}" 
+                             class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    {% elif post.content_type == 'video' %}
+                    <div class="relative h-40 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center group-hover:from-gray-700 group-hover:to-gray-800 transition-colors">
+                        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+                        <i class="fas fa-play-circle text-white text-4xl relative z-10 group-hover:scale-110 transition-transform"></i>
+                        {% if post.thumbnail %}
+                        <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}" class="absolute inset-0 w-full h-full object-cover">
+                        {% endif %}
+                    </div>
+                    {% elif post.content_type == 'poll' %}
+                    <div class="h-40 bg-gradient-to-br from-health-accent to-emerald-100 flex items-center justify-center group-hover:from-emerald-100 group-hover:to-emerald-200 transition-colors">
+                        <i class="fas fa-poll text-health-primary text-4xl group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    {% elif post.content_type == 'article' %}
+                    <div class="h-40 bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center group-hover:from-purple-100 group-hover:to-purple-200 transition-colors">
+                        <i class="fas fa-newspaper text-purple-500 text-4xl group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    {% else %}
+                    <div class="h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">
+                        <i class="fas fa-file-alt text-blue-500 text-4xl group-hover:scale-110 transition-transform"></i>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Content Type Badge -->
+                    <div class="absolute top-3 left-3">
+                        <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium
+                            {% if post.content_type == 'text' %}bg-blue-100 text-blue-800
+                            {% elif post.content_type == 'image' %}bg-purple-100 text-purple-800
+                            {% elif post.content_type == 'video' %}bg-red-100 text-red-800
+                            {% elif post.content_type == 'poll' %}bg-green-100 text-green-800
+                            {% elif post.content_type == 'article' %}bg-indigo-100 text-indigo-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {% if post.content_type == 'text' %}
+                                <i class="fas fa-file-alt mr-1"></i> Text
+                            {% elif post.content_type == 'image' %}
+                                <i class="fas fa-image mr-1"></i> Image
+                            {% elif post.content_type == 'video' %}
+                                <i class="fas fa-video mr-1"></i> Video
+                            {% elif post.content_type == 'poll' %}
+                                <i class="fas fa-poll mr-1"></i> Poll
+                            {% elif post.content_type == 'article' %}
+                                <i class="fas fa-newspaper mr-1"></i> Article
+                            {% else %}
+                                <i class="fas fa-file mr-1"></i> Content
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Content Info -->
+                <div class="p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <time class="text-xs text-gray-500">
+                            {{ post.created_at|date:"M d, Y" }}
+                        </time>
+                        {% if post.is_featured %}
+                        <span class="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                            <i class="fas fa-star mr-1"></i> Featured
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <h3 class="text-base font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-health-primary transition-colors">
+                        {{ post.title|default:"Health Tip" }}
+                    </h3>
+                    
+                    <p class="text-sm text-gray-600 mb-4 line-clamp-2">
+                        {{ post.excerpt|default:post.content|truncatewords:15|default:"Quick health insight to improve your wellness routine." }}
+                    </p>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex items-center justify-between">
+                        <a href="{{ post.get_absolute_url|default:'#' }}" 
+                           class="inline-flex items-center text-health-primary hover:text-health-dark font-medium text-sm transition-colors">
+                            Read more
+                            <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                        </a>
+                        
+                        {% if post.view_count %}
+                        <div class="flex items-center text-xs text-gray-500">
+                            <i class="fas fa-eye mr-1"></i>
+                            {{ post.view_count }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="mt-12 flex justify-center">
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                {% if page_obj.has_previous %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}page={{ page_obj.previous_page_number }}" 
+                   class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Previous</span>
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-health-primary text-sm font-medium text-white">
+                        {{ num }}
+                    </span>
+                    {% else %}
+                    <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}page={{ num }}" 
+                       class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}{% if request.GET.type %}type={{ request.GET.type }}&{% endif %}page={{ page_obj.next_page_number }}" 
+                   class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Next</span>
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <!-- Empty State -->
+        <div class="text-center py-16">
+            <div class="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                <i class="fas fa-search text-gray-400 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No content found</h3>
+            <p class="text-gray-600 mb-8 max-w-md mx-auto">
+                {% if request.GET.search %}
+                    No content matches your search for "{{ request.GET.search }}". Try different keywords or browse all content.
+                {% else %}
+                    No content available in this category yet. Check back later for new health tips and insights.
+                {% endif %}
+            </p>
+            <div class="space-x-4">
+                <a href="{% url 'content_list' %}" 
+                   class="inline-flex items-center px-6 py-3 bg-health-primary text-white rounded-lg hover:bg-health-dark transition-colors">
+                    <i class="fas fa-list mr-2"></i>
+                    Browse All Content
+                </a>
+                <a href="{% url 'home' %}" 
+                   class="inline-flex items-center px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-home mr-2"></i>
+                    Back to Home
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

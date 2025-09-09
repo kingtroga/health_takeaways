@@ -1,0 +1,240 @@
+{% extends 'base.html' %}
+
+{% block title %}Health Takeaways - Bite-sized health tips for your day{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-br from-health-primary via-emerald-600 to-health-dark overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-10"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+        <div class="text-center">
+            <div class="mb-8">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full backdrop-blur-sm mb-6">
+                    <i class="fas fa-heart text-white text-3xl"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl lg:text-6xl font-bold text-white mb-6">
+                Health Takeaways
+            </h1>
+            <p class="text-xl lg:text-2xl text-emerald-100 mb-8 max-w-3xl mx-auto">
+                Bite-sized health tips for your day
+            </p>
+            <p class="text-lg text-emerald-200 mb-12 max-w-2xl mx-auto">
+                Get daily wellness insights, medical tips, and health advice delivered directly to your WhatsApp. Stay informed, stay healthy.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="#whatsapp-cta" class="inline-flex items-center px-8 py-4 bg-white text-health-primary rounded-full font-semibold hover:bg-gray-50 transition-colors shadow-lg">
+                    <i class="fab fa-whatsapp text-xl mr-3"></i>
+                    Visit WhatsApp Channel
+                </a>
+                <a href="{% url 'content_list' %}" class="inline-flex items-center px-8 py-4 bg-transparent text-white border-2 border-white rounded-full font-semibold hover:bg-white hover:text-health-primary transition-colors">
+                    Browse Content
+                    <i class="fas fa-arrow-right ml-3"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Decorative Elements -->
+    <div class="absolute top-20 left-10 w-20 h-20 bg-white bg-opacity-10 rounded-full blur-xl"></div>
+    <div class="absolute bottom-20 right-10 w-32 h-32 bg-emerald-400 bg-opacity-20 rounded-full blur-xl"></div>
+    <div class="absolute top-1/2 right-20 w-16 h-16 bg-white bg-opacity-10 rounded-full blur-lg"></div>
+</section>
+
+<!-- Featured Content Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Latest Health Tips</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Discover our most recent health insights and wellness advice
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for post in featured_posts %}
+            <article class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden">
+                {% if post.content_type == 'image' %}
+                <div class="aspect-w-16 aspect-h-9 bg-gray-100">
+                    <img src="{{ post.image.url|default:'/static/images/placeholder-image.jpg' }}" alt="{{ post.title }}" class="w-full h-48 object-cover">
+                </div>
+                {% elif post.content_type == 'video' %}
+                <div class="aspect-w-16 aspect-h-9 bg-gray-900 relative">
+                    <div class="w-full h-48 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                        <i class="fas fa-play-circle text-white text-4xl"></i>
+                    </div>
+                </div>
+                {% elif post.content_type == 'poll' %}
+                <div class="h-48 bg-gradient-to-br from-health-accent to-emerald-100 flex items-center justify-center">
+                    <i class="fas fa-poll text-health-primary text-4xl"></i>
+                </div>
+                {% else %}
+                <div class="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+                    <i class="fas fa-file-alt text-blue-500 text-4xl"></i>
+                </div>
+                {% endif %}
+                
+                <div class="p-6">
+                    <div class="flex items-center mb-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                            {% if post.content_type == 'text' %}bg-blue-100 text-blue-800
+                            {% elif post.content_type == 'image' %}bg-purple-100 text-purple-800
+                            {% elif post.content_type == 'video' %}bg-red-100 text-red-800
+                            {% elif post.content_type == 'poll' %}bg-green-100 text-green-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {% if post.content_type == 'text' %}
+                                <i class="fas fa-file-alt mr-1"></i> Text
+                            {% elif post.content_type == 'image' %}
+                                <i class="fas fa-image mr-1"></i> Image
+                            {% elif post.content_type == 'video' %}
+                                <i class="fas fa-video mr-1"></i> Video
+                            {% elif post.content_type == 'poll' %}
+                                <i class="fas fa-poll mr-1"></i> Poll
+                            {% else %}
+                                <i class="fas fa-file mr-1"></i> Article
+                            {% endif %}
+                        </span>
+                        <span class="text-sm text-gray-500 ml-auto">{{ post.created_at|date:"M d" }}</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                        {{ post.title|default:"Health Tip of the Day" }}
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {{ post.excerpt|default:"Quick health insight to improve your daily wellness routine and overall health." }}
+                    </p>
+                    <a href="{{ post.get_absolute_url }}" class="inline-flex items-center text-health-primary hover:text-health-dark font-medium text-sm transition-colors">
+                        Read more
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </article>
+            {% empty %}
+            <!-- Placeholder cards when no content -->
+            {% for i in "123" %}
+            <article class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 border border-gray-100 overflow-hidden">
+                <div class="h-48 bg-gradient-to-br from-health-accent to-emerald-100 flex items-center justify-center">
+                    <i class="fas fa-heart text-health-primary text-4xl"></i>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center mb-3">
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-file-alt mr-1"></i> Health Tip
+                        </span>
+                        <span class="text-sm text-gray-500 ml-auto">Today</span>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">
+                        Daily Wellness Tip #{{ forloop.counter }}
+                    </h3>
+                    <p class="text-gray-600 text-sm mb-4">
+                        Discover simple ways to improve your health and wellness with our expert-backed tips and insights.
+                    </p>
+                    <a href="#" class="inline-flex items-center text-health-primary hover:text-health-dark font-medium text-sm transition-colors">
+                        Read more
+                        <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    </a>
+                </div>
+            </article>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Content Categories</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Explore different types of health content tailored to your interests
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <a href="{% url 'content_list' %}?type=text" class="group bg-white rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-blue-200">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-full mb-6 group-hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-file-alt text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Text Tips</h3>
+                <p class="text-gray-600 text-sm mb-4">Quick health tips and wellness advice in bite-sized text format.</p>
+                <div class="text-sm text-blue-600 font-medium">{{ text_count|default:"12" }} posts</div>
+            </a>
+            
+            <a href="{% url 'content_list' %}?type=article" class="group bg-white rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-purple-200">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-purple-100 text-purple-600 rounded-full mb-6 group-hover:bg-purple-200 transition-colors">
+                    <i class="fas fa-newspaper text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Articles</h3>
+                <p class="text-gray-600 text-sm mb-4">In-depth articles covering various health and wellness topics.</p>
+                <div class="text-sm text-purple-600 font-medium">{{ article_count|default:"8" }} articles</div>
+            </a>
+            
+            <a href="{% url 'content_list' %}?type=video" class="group bg-white rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-red-200">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 text-red-600 rounded-full mb-6 group-hover:bg-red-200 transition-colors">
+                    <i class="fas fa-video text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Videos</h3>
+                <p class="text-gray-600 text-sm mb-4">Engaging video content with health demonstrations and tips.</p>
+                <div class="text-sm text-red-600 font-medium">{{ video_count|default:"15" }} videos</div>
+            </a>
+            
+            <a href="{% url 'content_list' %}?type=poll" class="group bg-white rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-green-200">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-6 group-hover:bg-green-200 transition-colors">
+                    <i class="fas fa-poll text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Polls</h3>
+                <p class="text-gray-600 text-sm mb-4">Interactive polls to engage with health-related questions.</p>
+                <div class="text-sm text-green-600 font-medium">{{ poll_count|default:"6" }} polls</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- WhatsApp CTA Section -->
+<section id="whatsapp-cta" class="py-16 bg-gradient-to-r from-green-500 to-emerald-600">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-8">
+            <i class="fab fa-whatsapp text-white text-3xl"></i>
+        </div>
+        <h2 class="text-3xl lg:text-4xl font-bold text-white mb-6">
+            Get Health Tips on WhatsApp
+        </h2>
+        <p class="text-lg text-green-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of health-conscious individuals receiving daily wellness tips, medical insights, and health reminders directly on WhatsApp.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="https://wa.me/your-whatsapp-number" class="inline-flex items-center px-8 py-4 bg-white text-green-600 rounded-full font-semibold hover:bg-gray-50 transition-colors shadow-lg text-lg">
+                <i class="fab fa-whatsapp text-2xl mr-3"></i>
+                Join WhatsApp Channel
+            </a>
+            <div class="text-white text-sm opacity-90">
+                <i class="fas fa-users mr-2"></i>
+                {{ subscriber_count|default:"2,500+" }} active subscribers
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="text-4xl font-bold text-health-primary mb-2">{{ total_posts|default:"150+" }}</div>
+                <div class="text-gray-600">Health Tips Shared</div>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-bold text-health-primary mb-2">{{ total_subscribers|default:"2.5K+" }}</div>
+                <div class="text-gray-600">Active Subscribers</div>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-bold text-health-primary mb-2">{{ content_categories|default:"4" }}</div>
+                <div class="text-gray-600">Content Categories</div>
+            </div>
+            <div class="text-center">
+                <div class="text-4xl font-bold text-health-primary mb-2">{{ daily_tips|default:"1" }}</div>
+                <div class="text-gray-600">Tips Per Day</div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
