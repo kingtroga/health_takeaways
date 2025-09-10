@@ -24,9 +24,43 @@ def home(request):
     }
     return render(request, "home.html", context)
 
+# core/views.py
+from django.shortcuts import render
+from django.db.models import Q
+from django.core.paginator import Paginator
+from .models import Content
+
 def content_list(request):
-    post_list = Content.objects.all()
-    return render(request, "content_list.html", {"post_list": post_list})
+    ctype = (request.GET.get("type") or "").strip().lower()
+    allowed = {key for key, _ in Content.CONTENT_TYPES}
+
+    qs = Content.objects.all()
+    if ctype in allowed:
+        qs = qs.filter(content_type=ctype)
+
+    # (Optional) basic search support: ?q=...
+    q = (request.GET.get("q") or "").strip()
+    if q:
+        qs = qs.filter(
+            Q(title__icontains=q) |
+            Q(excerpt__icontains=q) |
+            Q(body__icontains=q)
+        )
+
+    # Pagination (adjust per page as you like)
+    paginator = Paginator(qs, 12)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "post_list": page_obj.object_list,
+        "page_obj": page_obj,
+        "is_paginated": page_obj.has_other_pages(),
+        "ctype": ctype or None,   # <-- use this in template instead of request.GET.type
+        "q": q,
+    }
+    return render(request, "content_list.html", context)
+
 
 def content_detail(request, pk):
     content = get_object_or_404(Content, pk=pk)

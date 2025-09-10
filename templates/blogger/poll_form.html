@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto p-6 space-y-6">
+  <h1 class="text-xl font-bold">{{ title }}</h1>
+
+  <form method="post" class="space-y-5">
+    {% csrf_token %}
+
+    <h2 class="font-semibold">Poll Post</h2>
+    {{ cform.non_field_errors }}
+    {% for f in cform %}
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ f.label }}{% if f.field.required %}<span class="text-red-500">*</span>{% endif %}</label>
+        {{ f }} {{ f.errors }}
+      </div>
+    {% endfor %}
+
+    <h2 class="font-semibold mt-4">Poll Question</h2>
+    {{ pform.non_field_errors }}
+    {% for f in pform %}
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ f.label }}</label>
+        {{ f }} {{ f.errors }}
+      </div>
+    {% endfor %}
+
+    <h2 class="font-semibold mt-4">Options</h2>
+    {{ formset.management_form }}
+    <div class="space-y-3">
+      {% for form in formset %}
+        <div class="p-3 border rounded">
+          {{ form.id }}
+          <div class="flex items-center gap-3">
+            <div class="flex-1">
+              <label class="block text-sm font-medium mb-1">Option</label>
+              {{ form.option_text }}
+            </div>
+            {% if form.DELETE %}
+              <label class="text-sm mt-6 inline-flex items-center gap-2">{{ form.DELETE }} Delete</label>
+            {% endif %}
+          </div>
+          {{ form.errors }}
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="flex gap-3">
+      <button class="px-4 py-2 bg-health-primary text-white rounded">Save</button>
+      <a href="{% url 'blogger:poll_list' %}" class="px-4 py-2 border rounded">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Blogger Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+  <!-- Header -->
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">Blogger</h1>
+    <p class="text-gray-600 mt-1">Create and manage Text Tips, Articles, Videos, and Polls.</p>
+  </div>
+
+  <!-- Quick Create -->
+  <div class="mb-8">
+    <div class="flex flex-wrap gap-3">
+      <a href="{% url 'blogger:text_create' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40 transition">
+        <i class="fas fa-file-alt"></i><span>New Health Tip</span>
+      </a>
+      <a href="{% url 'blogger:article_create' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-600/40 transition">
+        <i class="fas fa-newspaper"></i><span>New Article</span>
+      </a>
+      <a href="{% url 'blogger:video_create' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600/40 transition">
+        <i class="fas fa-video"></i><span>New Video</span>
+      </a>
+      <!--<a href="{% url 'blogger:poll_create' %}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 transition">
+        <i class="fas fa-poll"></i><span>New Poll</span>
+      </a>-->
+    </div>
+  </div>
+
+  <!-- Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+    <!-- Text -->
+    <div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
+      <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-sky-400"></div>
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50 text-blue-600">
+            <i class="fas fa-file-alt"></i>
+          </div>
+          <a href="{% url 'blogger:text_list' %}" class="text-blue-600 hover:text-blue-700 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40 rounded px-2 py-1">
+            View all
+          </a>
+        </div>
+        <div class="mt-4">
+          <div class="text-sm text-gray-500">Health Tips</div>
+          <div class="text-3xl font-semibold text-gray-900 tracking-tight mt-1">{{ counts.text }}</div>
+        </div>
+        <div class="mt-5">
+          <a href="{% url 'blogger:text_create' %}" class="inline-flex items-center gap-2 text-sm font-medium text-blue-700 hover:text-blue-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/40 rounded px-3 py-2 bg-blue-50 hover:bg-blue-100 transition">
+            <i class="fas fa-plus"></i><span>New Health Tip</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Article -->
+    <div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
+      <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 to-fuchsia-400"></div>
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-purple-50 text-purple-600">
+            <i class="fas fa-newspaper"></i>
+          </div>
+          <a href="{% url 'blogger:article_list' %}" class="text-purple-600 hover:text-purple-700 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-600/40 rounded px-2 py-1">
+            View all
+          </a>
+        </div>
+        <div class="mt-4">
+          <div class="text-sm text-gray-500">Articles</div>
+          <div class="text-3xl font-semibold text-gray-900 tracking-tight mt-1">{{ counts.article }}</div>
+        </div>
+        <div class="mt-5">
+          <a href="{% url 'blogger:article_create' %}" class="inline-flex items-center gap-2 text-sm font-medium text-purple-700 hover:text-purple-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-600/40 rounded px-3 py-2 bg-purple-50 hover:bg-purple-100 transition">
+            <i class="fas fa-plus"></i><span>New Article</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
+      <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-500 to-rose-400"></div>
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-red-50 text-red-600">
+            <i class="fas fa-video"></i>
+          </div>
+          <a href="{% url 'blogger:video_list' %}" class="text-red-600 hover:text-red-700 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600/40 rounded px-2 py-1">
+            View all
+          </a>
+        </div>
+        <div class="mt-4">
+          <div class="text-sm text-gray-500">Videos</div>
+          <div class="text-3xl font-semibold text-gray-900 tracking-tight mt-1">{{ counts.video }}</div>
+        </div>
+        <div class="mt-5">
+          <a href="{% url 'blogger:video_create' %}" class="inline-flex items-center gap-2 text-sm font-medium text-red-700 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600/40 rounded px-3 py-2 bg-red-50 hover:bg-red-100 transition">
+            <i class="fas fa-plus"></i><span>New Video</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Poll -->
+    <!--<div class="group relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
+      <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+      <div class="p-5">
+        <div class="flex items-center justify-between">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600">
+            <i class="fas fa-poll"></i>
+          </div>
+          <a href="{% url 'blogger:poll_list' %}" class="text-emerald-600 hover:text-emerald-700 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded px-2 py-1">
+            View all
+          </a>
+        </div>
+        <div class="mt-4">
+          <div class="text-sm text-gray-500">Polls</div>
+          <div class="text-3xl font-semibold text-gray-900 tracking-tight mt-1">{{ counts.poll }}</div>
+        </div>
+        <div class="mt-5">
+          <a href="{% url 'blogger:poll_create' %}" class="inline-flex items-center gap-2 text-sm font-medium text-emerald-700 hover:text-emerald-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600/40 rounded px-3 py-2 bg-emerald-50 hover:bg-emerald-100 transition">
+            <i class="fas fa-plus"></i><span>New Poll</span>
+          </a>
+        </div>
+      </div>
+    </div>-->
+
+  </div>
+</div>
+{% endblock %}

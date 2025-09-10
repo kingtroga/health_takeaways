@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block content %}
+<div class="min-h-[60vh] flex items-center justify-center px-4">
+  <div class="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
+    <h1 class="text-2xl font-bold text-gray-900 mb-1">Create account</h1>
+    <p class="text-sm text-gray-500 mb-5">Join to manage Blogger content.</p>
+
+    {% if form.non_field_errors %}
+      <div class="mb-4 rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm">
+        {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-1">{{ form.username.label }}</label>
+        {{ form.username }} {{ form.username.errors }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-1">{{ form.email.label }}</label>
+        {{ form.email }} {{ form.email.errors }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-1">{{ form.password1.label }}</label>
+        {{ form.password1 }} {{ form.password1.errors }}
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-900 mb-1">{{ form.password2.label }}</label>
+        {{ form.password2 }} {{ form.password2.errors }}
+      </div>
+
+      {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+      {% endif %}
+
+      <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-health-primary text-white px-4 py-2.5 hover:bg-health-dark transition">
+        Create account
+      </button>
+    </form>
+
+    <div class="mt-4 text-center text-sm">
+      <a href="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}" class="text-health-primary hover:text-health-dark">Sign in instead</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

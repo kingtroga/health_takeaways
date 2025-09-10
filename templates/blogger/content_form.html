@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto p-6">
+  <h1 class="text-xl font-bold mb-4">{{ title }}</h1>
+  <form method="post" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+      <div>
+        <label class="block text-sm font-medium mb-1">{{ field.label }}{% if field.field.required %}<span class="text-red-500">*</span>{% endif %}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="text-xs text-gray-500">{{ field.help_text }}</p>{% endif %}
+        {{ field.errors }}
+      </div>
+    {% endfor %}
+    <div class="flex gap-3">
+      <button class="px-4 py-2 bg-health-primary text-white rounded">Save</button>
+      <a href="{% url 'blogger:'|add:ctype|add:'_list' %}" class="px-4 py-2 border rounded">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

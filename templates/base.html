@@ -59,15 +59,15 @@
                         <a href="{% url 'content_list' %}" class="{% if request.resolver_match.url_name == 'content_list' %}text-health-primary bg-health-accent{% else %}text-gray-500 hover:text-gray-700{% endif %} px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             Content
                         </a>
-                        <a href="#" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <a href="#categories-cta" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             Categories
                         </a>
                         <a href="#" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             About
                         </a>
                         {% if user.is_staff %}
-                        <a href="/admin/" class="text-health-primary hover:text-health-dark px-3 py-2 rounded-md text-sm font-medium transition-colors">
-                            Admin
+                        <a href="/blogger/" class="text-health-primary hover:text-health-dark px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Blogger
                         </a>
                         {% endif %}
                     </div>
@@ -91,15 +91,15 @@
                 <a href="{% url 'content_list' %}" class="{% if request.resolver_match.url_name == 'content_list' %}text-health-primary bg-health-accent{% else %}text-gray-500 hover:text-gray-700{% endif %} block px-3 py-2 rounded-md text-base font-medium">
                     Content
                 </a>
-                <a href="#" class="text-gray-500 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium">
+                <a href="/#categories-cta" class="text-gray-500 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium">
                     Categories
                 </a>
                 <a href="#" class="text-gray-500 hover:text-gray-700 block px-3 py-2 rounded-md text-base font-medium">
                     About
                 </a>
                 {% if user.is_staff %}
-                <a href="/admin/" class="text-health-primary hover:text-health-dark block px-3 py-2 rounded-md text-base font-medium">
-                    Admin
+                <a href="/blogger/" class="text-health-primary hover:text-health-dark block px-3 py-2 rounded-md text-base font-medium">
+                    Blogger
                 </a>
                 {% endif %}
             </div>
@@ -157,7 +157,7 @@
                     <ul class="space-y-3">
                         <li><a href="{% url 'home' %}" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
                         <li><a href="{% url 'content_list' %}" class="text-gray-400 hover:text-white transition-colors">All Content</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Categories</a></li>
+                        <li><a href="/#categories-cta" class="text-gray-400 hover:text-white transition-colors">Categories</a></li>
                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About Us</a></li>
                     </ul>
                 </div>

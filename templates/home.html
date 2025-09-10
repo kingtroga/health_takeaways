@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+
 {% block title %}Health Takeaways - Bite-sized health tips for your day{% endblock %}
 
 {% block content %}
@@ -66,6 +67,12 @@
                 {% elif post.content_type == 'poll' %}
                 <div class="h-48 bg-gradient-to-br from-health-accent to-emerald-100 flex items-center justify-center">
                     <i class="fas fa-poll text-health-primary text-4xl"></i>
+                </div>
+                {% elif post.content_type == 'article'%}
+                <div class="aspect-w-16 aspect-h-10 bg-gray-100">
+                        <img src="{{ post.image.url|default:'/static/images/placeholder-image.jpg' }}" 
+                             alt="{{ post.title }}" 
+                             class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
                 </div>
                 {% else %}
                 <div class="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
@@ -140,7 +147,7 @@
 </section>
 
 <!-- Categories Section -->
-<section class="py-16 bg-gray-50">
+<section id="categories-cta" class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
             <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Content Categories</h2>
@@ -177,14 +184,14 @@
                 <div class="text-sm text-red-600 font-medium">{{ video_count|default:"15" }} videos</div>
             </a>
             
-            <a href="{% url 'content_list' %}?type=poll" class="group bg-white rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-green-200">
+            <!--<a href="{% url 'content_list' %}?type=poll" class="group bg-white rounded-xl p-8 text-center hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-green-200">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-6 group-hover:bg-green-200 transition-colors">
                     <i class="fas fa-poll text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 mb-3">Polls</h3>
                 <p class="text-gray-600 text-sm mb-4">Interactive polls to engage with health-related questions.</p>
                 <div class="text-sm text-green-600 font-medium">{{ poll_count|default:"6" }} polls</div>
-            </a>
+            </a>-->
         </div>
     </div>
 </section>
@@ -227,7 +234,7 @@
                 <div class="text-gray-600">Active Subscribers</div>
             </div>
             <div class="text-center">
-                <div class="text-4xl font-bold text-health-primary mb-2">{{ content_categories|default:"4" }}</div>
+                <div class="text-4xl font-bold text-health-primary mb-2">{{ content_categories|default:"3" }}</div>
                 <div class="text-gray-600">Content Categories</div>
             </div>
             <div class="text-center">

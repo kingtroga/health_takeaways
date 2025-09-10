@@ -54,27 +54,38 @@
             
             <!-- Filter Buttons -->
             <div class="flex flex-wrap gap-3">
-                <a href="{% url 'content_list' %}" 
-                   class="{% if not request.GET.type %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                <a href="{% url 'content_list' %}"
+                    class="{% if not ctype %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
                     All
                 </a>
-                <a href="{% url 'content_list' %}?type=text" 
-                   class="{% if request.GET.type == 'text' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+
+                <a href="{% url 'content_list' %}?type=text"
+                    class="{% if ctype == 'text' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
                     <i class="fas fa-file-alt mr-1"></i> Text
                 </a>
-                <a href="{% url 'content_list' %}?type=article" 
-                   class="{% if request.GET.type == 'article' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+
+                <a href="{% url 'content_list' %}?type=article"
+                    class="{% if ctype == 'article' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
                     <i class="fas fa-newspaper mr-1"></i> Articles
                 </a>
-                <a href="{% url 'content_list' %}?type=video" 
-                   class="{% if request.GET.type == 'video' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+
+                <a href="{% url 'content_list' %}?type=video"
+                    class="{% if ctype == 'video' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
                     <i class="fas fa-video mr-1"></i> Videos
                 </a>
-                <a href="{% url 'content_list' %}?type=poll" 
-                   class="{% if request.GET.type == 'poll' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+
+                {# Optional: add Poll / Image #}
+                <!--<a href="{% url 'content_list' %}?type=poll"
+                    class="{% if ctype == 'poll' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
                     <i class="fas fa-poll mr-1"></i> Polls
                 </a>
+
+                <a href="{% url 'content_list' %}?type=image"
+                    class="{% if ctype == 'image' %}bg-health-primary text-white{% else %}bg-gray-100 text-gray-700 hover:bg-gray-200{% endif %} px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                    <i class="fas fa-image mr-1"></i> Images
+                </a>-->
             </div>
+
         </div>
         
         <!-- Results Count -->
@@ -117,8 +128,10 @@
                         <i class="fas fa-poll text-health-primary text-4xl group-hover:scale-110 transition-transform"></i>
                     </div>
                     {% elif post.content_type == 'article' %}
-                    <div class="h-40 bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center group-hover:from-purple-100 group-hover:to-purple-200 transition-colors">
-                        <i class="fas fa-newspaper text-purple-500 text-4xl group-hover:scale-110 transition-transform"></i>
+                    <div class="aspect-w-16 aspect-h-10 bg-gray-100">
+                        <img src="{{ post.image.url|default:'/static/images/placeholder-image.jpg' }}" 
+                             alt="{{ post.title }}" 
+                             class="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
                     {% else %}
                     <div class="h-40 bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center group-hover:from-blue-100 group-hover:to-blue-200 transition-colors">

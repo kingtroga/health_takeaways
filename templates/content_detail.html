@@ -234,32 +234,91 @@
             {% endif %}
             
             <!-- Content Footer -->
-            <div class="px-8 py-6 bg-gray-50 border-t border-gray-200">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+            <div class="px-4 sm:px-6 lg:px-8 py-6 bg-gray-50 border-t border-gray-200">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <!-- Share Buttons -->
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-600 font-medium">Share:</span>
-                        <a href="https://wa.me/?text={{ content.title|urlencode }} - {{ request.build_absolute_uri|urlencode }}" 
-                           class="inline-flex items-center px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm">
-                            <i class="fab fa-whatsapp mr-2"></i> WhatsApp
-                        </a>
-                        <a href="https://twitter.com/intent/tweet?text={{ content.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" 
-                           class="inline-flex items-center px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors text-sm">
-                            <i class="fab fa-twitter mr-2"></i> Twitter
-                        </a>
-                        <button onclick="copyToClipboard('{{ request.build_absolute_uri }}')" 
-                                class="inline-flex items-center px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors text-sm">
-                            <i class="fas fa-copy mr-2"></i> Copy Link
-                        </button>
+                    <div class="flex flex-wrap items-center gap-3">
+                    <span class="text-sm text-gray-600 font-medium shrink-0">Share:</span>
+
+                    <a
+                        href="https://wa.me/?text={{ content.title|urlencode }} - {{ request.build_absolute_uri|urlencode }}"
+                        target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500/40"
+                    >
+                        <i class="fab fa-whatsapp"></i>
+                        <span class="hidden xs:inline sm:inline">WhatsApp</span>
+                        <span class="sr-only">Share on WhatsApp</span>
+                    </a>
+
+                    <a
+                        href="https://twitter.com/intent/tweet?text={{ content.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}"
+                        target="_blank" rel="noopener"
+                        class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-400 text-white hover:bg-blue-500 transition-colors text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/40"
+                    >
+                        <i class="fab fa-twitter"></i>
+                        <span class="hidden sm:inline">Twitter</span>
+                        <span class="sr-only">Share on Twitter</span>
+                    </a>
+
+                    <button
+                        type="button"
+                        onclick="copyToClipboard('{{ request.build_absolute_uri|escapejs }}')"
+                        class="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition-colors text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500/40"
+                    >
+                        <i class="fas fa-copy"></i>
+                        <span class="hidden sm:inline">Copy Link</span>
+                        <span class="sr-only">Copy link to clipboard</span>
+                    </button>
+
+                    <!-- Native share (phones); falls back to copy -->
+                    <button
+                        type="button"
+                        onclick="nativeShare('{{ content.title|escapejs }}','{{ request.build_absolute_uri|escapejs }}')"
+                        class="inline-flex md:hidden items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 text-white hover:bg-black transition-colors text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-800/40"
+                    >
+                        <i class="fas fa-share-alt"></i>
+                        <span>Share</span>
+                    </button>
                     </div>
-                    
+
                     <!-- Back to List -->
-                    <a href="{% url 'content_list' %}" 
-                       class="inline-flex items-center px-4 py-2 bg-health-primary text-white rounded-lg hover:bg-health-dark transition-colors text-sm">
-                        <i class="fas fa-arrow-left mr-2"></i> Back to Content
+                    <a
+                    href="{% url 'content_list' %}"
+                    class="order-first md:order-none inline-flex justify-center items-center w-full md:w-auto px-4 py-2 rounded-lg bg-health-primary text-white hover:bg-health-dark transition-colors text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-health-primary/40"
+                    >
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    <span>Back to Content</span>
                     </a>
                 </div>
             </div>
+
+<script>
+  function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        // Optional: toast/feedback
+      });
+    } else {
+      const t = document.createElement('textarea');
+      t.value = text;
+      t.style.position = 'fixed';
+      t.style.left = '-9999px';
+      document.body.appendChild(t);
+      t.focus(); t.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(t);
+    }
+  }
+
+  function nativeShare(title, url) {
+    if (navigator.share) {
+      navigator.share({ title, url }).catch(() => {});
+    } else {
+      copyToClipboard(url);
+    }
+  }
+</script>
+
         </article>
         
         <!-- Related Content -->

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ ctype|title }} – Blogger{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">{% if ctype and ctype|lower == "text" %} Health Tip {% else %}{{ ctype|default:"All"|title }}{% endif %}</h1>
+    {% if ctype == "text" %}
+      <a class="btn bg-green-600 hover:bg-green-400 text-white rounded-lg p-2 border" href="{% url 'blogger:text_create' %}">+ New Health Tip</a>
+    {% elif ctype == "article" %}
+      <a class="btn bg-green-600 hover:bg-green-400 text-white rounded-lg p-2 border" href="{% url 'blogger:article_create' %}">+ New Article</a>
+    {% elif ctype == "video" %}
+      <a class="btn bg-green-600 hover:bg-green-400 text-white rounded-lg p-2 border-black" href="{% url 'blogger:video_create' %}">+ New Video</a>
+    {% elif ctype == "poll" %}
+      <a class="btn bg-green-600 hover:bg-green-400 text-white rounded-lg p-2 border-black" href="{% url 'blogger:poll_create' %}">+ New Poll</a>
+    {% endif %}
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    {% for it in items %}
+      <div class="p-4 border rounded-lg">
+        <div class="text-xs uppercase text-gray-500 mb-1">{{ it.content_type }}</div>
+        <div class="font-semibold">{{ it.title }}</div>
+        <div class="text-sm text-gray-600 mt-1">{{ it.excerpt|default:it.body|truncatewords:20 }}</div>
+        <div class="flex gap-3 mt-3">
+          <a class="text-blue-600" href="{{ it.get_absolute_url }}" target="_blank">View</a>
+          <a class="text-amber-600" href="{% url 'blogger:content_edit' it.pk %}">Edit</a>
+          <a class="text-red-600" href="{% url 'blogger:content_delete' it.pk %}">Delete</a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="text-gray-500">No items yet.</div>
+    {% endfor %}
+  </div>
+
+  {% if is_paginated %}
+    <div class="mt-6 flex gap-2">
+      {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded">Prev</a>{% endif %}
+      <span class="px-3 py-1 border rounded bg-gray-100">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded">Next</a>{% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
