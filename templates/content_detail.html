@@ -89,12 +89,19 @@
                 <div class="flex items-center">
                     <i class="fas fa-clock mr-2"></i>
                     <span>
-                        {% if content.content_type == 'video' %}3-5 min
-                        {% elif content.content_type == 'article' %}{{ content.body|wordcount|floatformat:0|add:"60"|div:"200" }} min read
-                        {% else %}1 min read
+                        {% if content.content_type == 'video' %}
+                            3-5 min
+                        {% elif content.content_type == 'article' %}
+                            {% with words=content.body|default_if_none:""|wordcount %}
+                                {% widthratio words 200 1 as mins %}
+                                {{ mins|default:1 }} min read
+                            {% endwith %}
+                        {% else %}
+                            1 min read
                         {% endif %}
                     </span>
                 </div>
+
             </div>
         </div>
     </div>
@@ -147,13 +154,7 @@
                 {% endif %}
             </div>
             
-            {% elif content.content_type == 'image' %}
-            <!-- Image Content -->
-            {% if content.image %}
-            <div class="text-center bg-gray-100">
-                <img src="{{ content.image.url }}" alt="{{ content.title }}" class="max-w-full h-auto mx-auto">
-            </div>
-            {% endif %}
+            
             
             {% elif content.content_type == 'poll' and poll %}
             <!-- Poll Content -->
@@ -193,12 +194,25 @@
                                 <span class="text-sm text-gray-600">{{ option.votes }} vote{{ option.votes|pluralize }}</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-600 h-2 rounded-full" style="width: {% widthratio option.votes poll.options.all|length %}%"></div>
+                            {% if total_votes %}
+                                <div class="bg-green-600 h-2 rounded-full"
+                                    style="width: {% widthratio option.votes total_votes 100 %}%"></div>
+                            {% else %}
+                                <div class="bg-green-600 h-2 rounded-full" style="width: 0%"></div>
+                            {% endif %}
                             </div>
                         </div>
                         {% endfor %}
                     </div>
                 </div>
+            </div>
+            {% endif %}
+
+            
+            <!-- Image Content -->
+            {% if content.image %}
+            <div class="text-center bg-gray-100">
+                <img src="{{ content.image.url }}" alt="{{ content.title }}" class="max-w-full h-auto mx-auto">
             </div>
             {% endif %}
             

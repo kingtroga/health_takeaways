@@ -41,5 +41,6 @@ def content_detail(request, pk):
     context = {
         "content": content,
         "poll": poll,
+        "total_votes": 200, 
     }
     return render(request, "content_detail.html", context)
